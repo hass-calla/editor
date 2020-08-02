@@ -1,6 +1,6 @@
 <template>
 
-  <builder-form class="builder-device-form">
+  <builder-form class="builder-board-form">
     <template v-slot:default="{ form, onInput }">
       <v-text-field v-model="form.id" label="ID" readonly required />
       <v-text-field v-model="form.name" label="Name" required />
@@ -21,7 +21,7 @@
   import FormSectionInput from "../components/FormSectionInput";
 
   export default {
-    name: 'builder-device-form',
+    name: 'builder-board-form',
 
     props: {},
 
@@ -45,7 +45,7 @@
 
 <style lang="scss" scoped>
 
-  .builder-device-form {
+  .builder-board-form {
 
   }
 

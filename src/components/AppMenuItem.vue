@@ -4,6 +4,11 @@
     <v-list-item-content>
       <v-list-item-title>{{ name }}</v-list-item-title>
     </v-list-item-content>
+    <v-list-item-action>
+      <v-icon color="grey lighten-1">
+        mdi-chevron-right
+      </v-icon>
+    </v-list-item-action>
   </v-list-item>
 
 </template>
@@ -27,12 +32,12 @@
     computed: {
 
       itemLink() {
-        let name = "device";
+        let name = "board";
         const params = {
           ...this.$route.params
         };
 
-        switch (this.currentBuilderType) {
+        switch (this.currentObjectType) {
           case "tile":
           case "group":
             name = "tile";
@@ -43,7 +48,7 @@
             params.tileId = undefined;
             params.groupId = this.id;
             break;
-          case "device":
+          case "board":
             name = "page";
             params.tileId = undefined;
             params.groupId = undefined;
@@ -53,7 +58,7 @@
             params.tileId = undefined;
             params.groupId = undefined;
             params.pageId = undefined;
-            params.deviceId = this.id;
+            params.boardId = this.id;
             break;
         }
 

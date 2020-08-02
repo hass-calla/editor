@@ -48,7 +48,9 @@
         handler() {
           this.form = {...this.currentObject};
 
-          this.$nextTick(() => this.loaded = true);
+          this.$nextTick(() => {
+            this.loaded = true
+          });
         }
       },
       form: {
@@ -66,15 +68,19 @@
       },
 
       onInput() {
-        this.$store.commit('updateObject', {
-          type: this.currentBuilderType,
+        if(! this.loaded) {
+          return;
+        }
+
+        this.$store.dispatch('updateObject', {
+          type: this.currentObjectType,
           object: this.form
         });
       },
 
       deleteObject() {
         this.$store.commit('deleteObject', {
-          type: this.currentBuilderType,
+          type: this.currentObjectType,
           object: this.form
         });
 

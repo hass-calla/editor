@@ -9,6 +9,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import Api from "./api";
 import Socket from "./socket";
+import Icons from './icons';
 
 import "./mixins/CallaEditorMixin";
 import "./autoload";
@@ -17,6 +18,8 @@ Vue.config.productionTip = false;
 
 Vue.prototype.$api = new Api;
 Vue.prototype.$socket = new Socket;
+Vue.prototype.$icons = new Icons;
+
 
 new Vue({
   router,

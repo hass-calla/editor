@@ -3,20 +3,18 @@
   <v-autocomplete
     v-model="newValue"
     :items="icons"
-    :loading="loading"
-    :readonly="loading"
     item-text="name"
     item-value="name"
     label="Icon"
     :filter="filter"
     :allow-overflow="false"
     clearable
-    :prepend-inner-icon="`mdi-${(newValue || 'square')}`">
+    :prepend-inner-icon="$icons.byName((newValue || 'square'))">
 
     <template v-slot:item="{item}">
-      <v-list-item-avatar>
-        <v-icon>mdi-{{ item.name }}</v-icon>
-      </v-list-item-avatar>
+      <v-list-item-icon>
+        <v-icon>{{ $icons.byName(item.name) }}</v-icon>
+      </v-list-item-icon>
       <v-list-item-content :title="(item.aliases || []).join(', ')">
         <v-list-item-title>{{ item.name }}</v-list-item-title>
         <v-list-item-subtitle>{{ (item.aliases || []).join(", ") }}</v-list-item-subtitle>
@@ -40,13 +38,11 @@
       value: String
     },
 
-    data: () => ({
-      loading: false,
-      icons: []
-    }),
+    data() {
+      return {}
+    },
 
     mounted() {
-      this.fetch();
     },
 
     methods: {
@@ -58,27 +54,17 @@
 
         return name.indexOf(searchText) > -1 ||
           aliases.indexOf(searchText) > -1;
-      },
-
-      async fetch() {
-        this.loading = true;
-
-        const res = await fetch("/api/v1/icons", {
-          "headers": {
-            "accept": "application/json",
-          },
-          "body": null,
-          "method": "GET",
-          "mode": "cors"
-        });
-
-        this.icons = await res.json();
-        this.loading = false;
-      },
+      }
 
     },
 
-    computed: {}
+    computed: {
+
+      icons() {
+        return this.$icons.all();
+      }
+
+    }
 
   };
 

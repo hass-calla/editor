@@ -49,7 +49,6 @@
     },
 
     mounted() {
-      console.log(this.$options.components);
       this.loadComponents();
     },
 

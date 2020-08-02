@@ -2,11 +2,13 @@
   <div class="builder">
 
     <div class="menu-section">
-      <app-menu></app-menu>
+      <app-menu :loading="loading"
+                @createClicked="createObject"
+                :creating="creating" />
     </div>
 
     <div class="form-section">
-      <router-view></router-view>
+      <router-view v-if="! loading"></router-view>
     </div>
 
     <div class="preview-section">
@@ -21,11 +23,30 @@
   export default {
     name: 'Builder',
 
-    data: () => ({
+    data() {
+      return {
+        loading: false,
+        creating: false,
+      }
+    },
 
+    async mounted() {
+      this.loading = true;
 
+      await this.$store.dispatch('loadBoards');
 
-    }),
+      this.loading = false;
+    },
+
+    methods: {
+      async createObject({type, relatedObjectId}) {
+        this.creating = true;
+
+        await this.$store.dispatch('createObject', {type, relatedObjectId});
+
+        this.creating = false;
+      }
+    },
 
     components: {AppMenu}
   };

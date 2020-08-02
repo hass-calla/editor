@@ -4,10 +4,11 @@ import colors from 'vuetify/es5/util/colors'
 
 Vue.use(Vuetify)
 
-console.log(colors);
-
 export default new Vuetify({
   theme: {
+    icons: {
+      iconfont: 'mdiSvg',
+    },
     options: {
       customProperties: true,
     },

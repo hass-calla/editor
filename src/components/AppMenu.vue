@@ -14,36 +14,36 @@
           <v-breadcrumbs class="pa-0" :items="breadcrumbs" dark>
             <template v-slot:item="{ item }">
               <v-breadcrumbs-item :to="item.to" ripple exact>
-              <span class="text--lighten-2">
-                {{ item.text }}
-              </span>
+                <span class="text--lighten-2">{{ item.text }}</span>
               </v-breadcrumbs-item>
             </template>
           </v-breadcrumbs>
         </div>
       </v-toolbar>
       <v-toolbar color="primary" dark flat dense>
-        <v-toolbar-title>Title</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn class="back-button" icon>
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
+        <v-toolbar-title v-if="currentObject">
+          {{ currentObject.name }} <small>({{ currentObjectType }})</small>
+        </v-toolbar-title>
       </v-toolbar>
     </div>
 
     <div class="app-menu-body" :style="bodyStyle">
-      <v-list shaped flat>
+      <v-list class="pl-0" shaped nav>
         <app-menu-item v-for="(item, i) in items"
                        :key="item.id"
+                       :icon="item.icon"
                        :name="item.name"
                        :id="item.id"/>
       </v-list>
     </div>
 
     <div class="app-menu-footer" ref="menuFooter">
-      <v-btn color="primary" large depressed tile block>
+      <v-btn color="primary"
+             @click="createObject"
+             large depressed
+             tile block>
         <v-icon left>mdi-plus</v-icon>
-        New Device
+        Add {{ this.currentItemType }}
       </v-btn>
     </div>
   </div>
@@ -52,6 +52,14 @@
 
 <script>
   import AppMenuItem from "./AppMenuItem";
+
+  const breadcrumbsMap = {
+    'editor': 'Boards',
+    'board': 'Pages',
+    'page': 'Groups',
+    'group': 'Tiles',
+    'tile': 'Tiles'
+  };
 
   export default {
     name: 'app-menu',
@@ -71,17 +79,36 @@
 
     methods: {
 
+      createObject() {
+        let relatedObjectId = '';
+
+        switch(this.currentObjectType) {
+          case "tile":
+          case "group":
+            relatedObjectId = this.$route.params.groupId;
+            break;
+          case "page":
+            relatedObjectId = this.$route.params.pageId;
+            break;
+          case "board":
+            relatedObjectId = this.$route.params.boardId;
+            break;
+        }
+
+        this.$emit('createClicked', {type: this.currentItemType, relatedObjectId})
+      },
+
       goBack() {
-        if(this.builderTypes.indexOf(this.currentBuilderType) <= 0) {
+        if(this.builderTypes.indexOf(this.currentObjectType) <= 0) {
           this.$router.replace({
-            name: 'builder',
+            name: 'editor',
           });
 
           return;
         }
 
         this.$router.replace({
-          name: this.builderTypes[this.builderTypes.indexOf(this.currentBuilderType) - 1],
+          name: this.builderTypes[this.builderTypes.indexOf(this.currentObjectType) - 1],
           params: {
             ...this.$store.params
           }
@@ -92,7 +119,7 @@
 
     computed: {
       backButtonIsActive() {
-        return this.builderTypes.indexOf(this.currentBuilderType) >= 0;
+        return this.builderTypes.indexOf(this.currentObjectType) >= 0;
       },
 
       bodyStyle() {
@@ -104,30 +131,30 @@
       breadcrumbs() {
         let items = [
           {
-            text: 'Builder',
-            disabled: this.builderTypes.indexOf(this.currentBuilderType) < 0,
+            text: 'Boards',
+            disabled: this.builderTypes.indexOf(this.currentObjectType) < 0,
             to: {
-              name: 'builder',
+              name: 'editor',
               params: {}
             },
           }
         ];
 
-        if(this.builderTypes.indexOf(this.currentBuilderType) < 0) {
+        if(this.builderTypes.indexOf(this.currentObjectType) < 0) {
           return items;
         }
 
         for(let type of this.builderTypes) {
           items.push({
-            text: type,
-            disabled: type === this.currentBuilderType,
+            text: breadcrumbsMap[type],
+            disabled: type === this.currentObjectType,
             to: {
               name: type,
               params: this.$route.params
             }
           });
 
-          if(type === this.currentBuilderType) {
+          if(type === this.currentObjectType) {
             break;
           }
         }
@@ -136,17 +163,7 @@
       },
 
       items() {
-        switch(this.currentBuilderType) {
-          case "group":
-          case "tile":
-            return this.$store.getters.tiles;
-          case "page":
-            return this.$store.getters.groups;
-          case "device":
-            return this.$store.getters.pages;
-          default:
-            return this.$store.getters.devices;
-        }
+        return this.$store.getters[`${this.currentItemType}s`];
       }
     }
 

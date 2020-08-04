@@ -15,7 +15,6 @@ export default class Icons {
     }
 
     byName(name) {
-        console.log(camelCase(`mdi-${name}`));
         return this.icons[camelCase(`mdi-${name}`)];
     }
 

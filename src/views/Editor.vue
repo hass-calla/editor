@@ -1,19 +1,22 @@
 <template>
-  <div class="builder">
+  <div class="editor">
 
-    <div class="menu-section">
-      <app-menu :loading="loading"
-                @createClicked="createObject"
-                :creating="creating" />
+    <template v-if="! loading">
+      <div class="menu-section">
+        <app-menu />
+      </div>
+
+      <div class="form-section">
+        <router-view />
+      </div>
+
+      <div class="preview-section">PREVIEW</div>
+    </template>
+
+    <div class="loader" v-else>
+      LOADING
     </div>
 
-    <div class="form-section">
-      <router-view v-if="! loading"></router-view>
-    </div>
-
-    <div class="preview-section">
-      PREVIEW
-    </div>
   </div>
 </template>
 
@@ -21,30 +24,25 @@
   import AppMenu from "../components/AppMenu";
 
   export default {
-    name: 'Builder',
+    name: 'editor',
 
     data() {
       return {
-        loading: false,
-        creating: false,
+
       }
     },
 
     async mounted() {
-      this.loading = true;
 
-      await this.$store.dispatch('loadBoards');
-
-      this.loading = false;
     },
 
     methods: {
-      async createObject({type, relatedObjectId}) {
-        this.creating = true;
 
-        await this.$store.dispatch('createObject', {type, relatedObjectId});
+    },
 
-        this.creating = false;
+    computed: {
+      loading() {
+        return ! this.$store.state.ready || ! this.$store.state.boardsLoaded;
       }
     },
 
@@ -54,7 +52,7 @@
 
 <style lang="scss" scoped>
 
-  .builder {
+  .editor {
     display: flex;
     flex-direction: row;
     flex-grow: 1;

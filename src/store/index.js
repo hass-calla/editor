@@ -25,8 +25,9 @@ const store = {
     boardsLoaded: false,
     boards: [],
 
+    builderTypes: ['board', 'page', 'group', 'tile'],
     displayedObjectType: 'editor',
-    currentListObjectType: 'boards'
+    currentListObjectType: null
   },
 
   getters: {
@@ -57,20 +58,18 @@ const store = {
 
     updateCurrentObject(state, objectType) {
       state.displayedObjectType = objectType;
+      state.currentListObjectType = null;
 
-      switch(this.currentObjectType) {
+      switch(objectType) {
         case "group":
         case "tile":
-          state.currentListObjectType = "tiles";
+          state.currentListObjectType = "tile";
           break;
         case "page":
-          state.currentListObjectType = "groups";
+          state.currentListObjectType = "group";
           break;
         case "board":
-          state.currentListObjectType = "pages";
-          break;
-        default:
-          state.currentListObjectType = "boards";
+          state.currentListObjectType = "page";
           break;
       }
     },

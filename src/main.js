@@ -11,8 +11,11 @@ import Api from "./api";
 import Socket from "./socket";
 import Icons from './icons';
 
-import "./mixins/CallaEditorMixin";
 import "./autoload";
+import "./mixins/GlobalMixin";
+import AsyncComputed from 'vue-async-computed';
+
+Vue.use(AsyncComputed);
 
 Vue.config.productionTip = false;
 

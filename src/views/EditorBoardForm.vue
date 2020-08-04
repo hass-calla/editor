@@ -1,14 +1,13 @@
 <template>
 
-  <builder-form class="builder-board-form">
-    <template v-slot:default="{ form, onInput }">
-      <v-text-field v-model="form.id" label="ID" readonly required />
-      <v-text-field v-model="form.name" label="Name" required />
+  <builder-form class="editor-board-form">
+    <template v-if="boardModel">
+      <v-text-field v-model="boardModel.id" label="ID" readonly required />
+      <v-text-field v-model="boardModel.name" label="Name" required />
 
       <form-section-input label="Background">
-        <builder-background-control v-model="form.background" />
+        <builder-background-control v-model="boardModel.background" />
       </form-section-input>
-
     </template>
   </builder-form>
 
@@ -21,7 +20,7 @@
   import FormSectionInput from "../components/FormSectionInput";
 
   export default {
-    name: 'builder-board-form',
+    name: 'editor-board-form',
 
     props: {},
 
@@ -45,7 +44,7 @@
 
 <style lang="scss" scoped>
 
-  .builder-board-form {
+  .editor-board-form {
 
   }
 

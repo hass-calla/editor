@@ -1,6 +1,6 @@
 <template>
 
-  <builder-form class="builder-group-form">
+  <builder-form class="editor-group-form">
     <template v-slot:default="{ form, onInput }">
       <v-text-field v-model="form.id" label="ID" readonly required />
       <v-text-field v-model="form.name" label="Name" required>
@@ -23,7 +23,7 @@
   import FormIconToggleInput from "../components/FormIconToggleInput";
 
   export default {
-    name: 'builder-page-form',
+    name: 'editor-page-form',
 
     props: {},
 
@@ -50,7 +50,7 @@
 
 <style lang="scss" scoped>
 
-  .builder-page-form {
+  .editor-page-form {
 
   }
 

@@ -5,39 +5,38 @@ import store from '../store';
 Vue.use(VueRouter);
 
 const routes = [
-  {
-    path: '',
-    name: 'boards',
-    component: () => import('../views/Boards.vue'),
-  },
     {
-        path: 'editor',
-        name: 'editor',
-        component: () => import('../views/Builder.vue'),
+        path: '/',
+        name: 'boards',
+        component: () => import('../views/Boards.vue'),
+    },
+    {
+        path: '/board/:boardId',
+        component: () => import('../views/Editor.vue'),
 
         children: [
             {
-                path: ':boardId',
+                path: '',
                 name: 'board',
-                component: () => import('../views/BuilderBoardForm'),
+                component: () => import('../views/EditorBoardForm'),
                 meta: {objectType: 'board'}
             },
             {
-                path: ':boardId/pages/:pageId',
+                path: 'pages/:pageId',
                 name: 'page',
-                component: () => import('../views/BuilderPageForm'),
+                component: () => import('../views/EditorPageForm'),
                 meta: {objectType: 'page'}
             },
             {
-                path: ':boardId/pages/:pageId/groups/:groupId',
+                path: 'pages/:pageId/groups/:groupId',
                 name: 'group',
-                component: () => import('../views/BuilderGroupForm'),
+                component: () => import('../views/EditorGroupForm'),
                 meta: {objectType: 'group'}
             },
             {
-                path: ':boardId/pages/:pageId/groups/:groupId/tiles/:tileId',
+                path: 'pages/:pageId/groups/:groupId/tiles/:tileId',
                 name: 'tile',
-                component: () => import('../views/BuilderTileForm'),
+                component: () => import('../views/EditorTileForm'),
                 meta: {objectType: 'tile'}
             },
         ]
@@ -56,21 +55,6 @@ router.beforeEach(async (to, from, next) => {
 
     if(! to.meta || ! to.meta.objectType) {
         to.meta.objectType = "editor";
-    }
-
-    switch(to.meta.objectType) {
-        case "board":
-            await store.dispatch('selectBoard', to.params.boardId);
-            break;
-        case "page":
-            await store.dispatch('selectPage', to.params.pageId);
-            break;
-        case "group":
-            await store.dispatch('selectGroup', to.params.groupId);
-            break;
-        case "tile":
-            await store.dispatch('selectTile', to.params.tileId);
-            break;
     }
 
     store.commit('updateCurrentObject', to.meta.objectType);

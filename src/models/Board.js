@@ -4,9 +4,7 @@ import Page from "./Page";
 
 class Board extends Model {
 
-    constructor(raw) {
-        super(raw);
-
+    boot() {
         this.loaded = false;
         this.loading = false;
         this._pages = {};
@@ -52,9 +50,16 @@ class Board extends Model {
         this.loaded = false;
         this.loading = true;
 
-        const pages = (await Board.api.pages(this)).data();
+        const pages = (await Board.api.pages(this));
 
-        for(let page of pages) {
+        if(pages.isError) {
+            this.loading = false;
+            this.loaded = false;
+
+            throw new Error(pages.data());
+        }
+
+        for(let page of pages.data()) {
             this.pushPage(new Page(page, this));
         }
 
@@ -70,6 +75,13 @@ class Board extends Model {
 
     pushPage(page) {
         Vue.set(this._pages, page.id, page);
+    }
+
+    static async create() {
+        return new Board(
+            (await Board.api.createBoard())
+                .data()
+        );
     }
 
 }

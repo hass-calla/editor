@@ -6,19 +6,19 @@ class Model {
     static api = new Api;
 
     constructor(rawObject, parentObject = null) {
+        this.boot();
+        this._original = {};
         this._attributes = {};
-        Vue.set(this, '_attributes', {});
         this._parent = parentObject;
 
         this.fill(rawObject);
     }
 
-    fill(rawObject) {
-        const keys = Object.keys(rawObject);
+    boot() {};
 
-        for(let key of keys) {
-            this[key] = rawObject[key];
-        }
+    fill(rawObject) {
+        this._original = rawObject;
+        Vue.set(this, '_attributes', rawObject);
     }
 
     setAttribute(key, value) {
@@ -54,10 +54,6 @@ class Model {
 
     set meta(value) {
         this.setAttribute('meta', value);
-    }
-
-    static create() {
-
     }
 
     update() {

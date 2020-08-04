@@ -1,6 +1,6 @@
 <template>
 
-  <builder-form class="builder-page-form">
+  <builder-form class="editor-page-form">
     <template v-slot:default="{ form, onInput }">
       <v-text-field v-model="form.id" label="ID" readonly required />
       <v-text-field v-model="form.name" label="Name" required />
@@ -24,7 +24,7 @@
   import FormSectionInput from "../components/FormSectionInput";
 
   export default {
-    name: 'builder-page-form',
+    name: 'editor-page-form',
 
     props: {},
 
@@ -48,7 +48,7 @@
 
 <style lang="scss" scoped>
 
-  .builder-page-form {
+  .editor-page-form {
 
   }
 

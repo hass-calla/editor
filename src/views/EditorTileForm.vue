@@ -1,6 +1,6 @@
 <template>
 
-  <builder-form class="builder-tile-form" ref="builderForm">
+  <builder-form class="editor-tile-form" ref="builderForm">
     <template v-slot:default="{ form, onInput }">
       <v-text-field v-model="form.id" label="ID" readonly required />
 
@@ -38,7 +38,7 @@
   import {upperFirst} from 'lodash/string';
 
   export default {
-    name: 'builder-tile-form',
+    name: 'editor-tile-form',
 
     props: {},
 
@@ -151,7 +151,7 @@
 
 <style lang="scss" scoped>
 
-  .builder-tile-form {
+  .editor-tile-form {
 
   }
 

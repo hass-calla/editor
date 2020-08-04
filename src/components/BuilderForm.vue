@@ -3,9 +3,7 @@
   <v-form class="builder-form">
 
     <div class="pa-4 pb-16 builder-form-content">
-      <slot v-if="loaded"
-            v-bind:form="form"
-            v-bind:onInput="onInput"></slot>
+      <slot></slot>
     </div>
 
     <v-container fluid class="py-1 builder-form-footer elevation-24">
@@ -17,7 +15,7 @@
           </confirm-button>
         </v-col>
 
-        <slot name="actions" v-bind:form="form" v-bind:onInput="onInput"></slot>
+        <slot name="actions"></slot>
       </v-row>
     </v-container>
   </v-form>
@@ -36,57 +34,15 @@
 
     data() {
       return {
-        loaded: false,
-        form: {}
+
       }
-    },
-
-    watch: {
-      currentObject: {
-        immediate: true,
-        deep: true,
-        handler() {
-          this.form = {...this.currentObject};
-
-          this.$nextTick(() => {
-            this.loaded = true
-          });
-        }
-      },
-      form: {
-        deep: true,
-        handler() {
-          this.onInput();
-        }
-      },
     },
 
     methods: {
-      update(newForm) {
-        this.form = {...newForm};
-        this.onInput();
-      },
-
-      onInput() {
-        if(! this.loaded) {
-          return;
-        }
-
-        this.$store.dispatch('updateObject', {
-          type: this.currentObjectType,
-          object: this.form
-        });
-      },
-
       deleteObject() {
-        this.$store.commit('deleteObject', {
-          type: this.currentObjectType,
-          object: this.form
-        });
-
+        this.$emit('delete');
         this.$root.$emit('menuGoBack');
       }
-
     },
 
     computed: {}

@@ -37,9 +37,15 @@ const GlobalMixin = {
             }
 
             return this.$store.getters.board(boardId);
-        },
+        }
+    },
 
+    asyncComputed: {
         pageModel() {
+            if(! this.$route) {
+                return;
+            }
+
             const pageId = this.$route.params.pageId;
 
             if(! pageId || ! this.boardModel) {
@@ -50,6 +56,10 @@ const GlobalMixin = {
         },
 
         groupModel() {
+            if(! this.$route) {
+                return;
+            }
+
             const groupId = this.$route.params.groupId;
 
             if(! groupId || ! this.pageModel) {
@@ -60,6 +70,10 @@ const GlobalMixin = {
         },
 
         tileModel() {
+            if(! this.$route) {
+                return;
+            }
+
             const tileId = this.$route.params.tileId;
 
             if(! tileId || ! this.groupModel) {
@@ -68,8 +82,8 @@ const GlobalMixin = {
 
             return this.groupModel.tile(tileId);
         }
-
     }
+
 };
 
 Vue.mixin(GlobalMixin);

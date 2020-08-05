@@ -1,27 +1,34 @@
 <template>
 
-  <builder-form class="editor-tile-form" ref="builderForm">
-    <template v-slot:default="{ form, onInput }">
-      <v-text-field v-model="form.id" label="ID" readonly required />
+  <builder-form class="editor-tile-form">
+    <template v-if="tileModel">
+      <v-text-field v-model="tileModel.id" label="ID" readonly required />
 
       <v-combobox :items="components"
-                  v-model="form.type"
+                  v-model="tileModel.type"
                   :return-object="false"
                   :loading="loading"
-                  @change="switchType($event, form)"
+                  @change="switchType($event)"
                   label="Tile Type" />
 
       <template v-if="! loading && component">
-        <v-combobox v-model="form.entityId"
+        <v-combobox v-model="tileModel.entity_id"
                     :items="entities"
                     label="Entity ID"
                     :return-object="false"
                     :multiple="component.multipleEntities"
                     :chips="component.multipleEntities" />
 
-        <v-text-field v-model="form.name" label="Name" required />
+        <v-text-field v-model="tileModel.name" label="Name" :readonly="tileModel.sync_friendly_name" required>
+          <template v-slot:append-outer>
+            <form-icon-toggle-input v-model="tileModel.sync_friendly_name"
+                                    :on-icon="$icons.byName(tileModel.hasEntity ? 'sync' : 'sync-alert')"
+                                    :off-icon="$icons.byName('sync-off')"
+                                    :tooltip="`Friendly Name Sync Is ${tileModel.sync_friendly_name ? 'On' : 'Off'}`" />
+          </template>
+        </v-text-field>
 
-        <component :is="componentForm" v-model="form"></component>
+        <component :is="componentForm" v-model="tileModel"></component>
 
       </template>
 
@@ -74,12 +81,9 @@
 
         this.loading = true;
 
-        this.$refs.builderForm.update({
-          ...component.form,
-          id: this.form.id,
-          style: this.form.style,
-          name: this.form.name
-        });
+        this.tileModel.syncComponentForm({
+          ...component.form
+        })
 
         this.$nextTick(() => this.loading = false);
       }
@@ -94,24 +98,20 @@
         }))
       },
 
-      form() {
-        return (this.$refs.builderForm || {}).form;
-      },
-
       component() {
-        if(! this.form || ! this.form.type) {
+        if(! this.tileModel || ! this.tileModel.type) {
           return null;
         }
 
-        return this.$store.getters.component(this.form.type);
+        return this.$store.getters.component(this.tileModel.type);
       },
 
       componentForm() {
-        if(! this.form || ! this.form.type) {
+        if(! this.tileModel || ! this.tileModel.type) {
           return null;
         }
 
-        const name = `${this.form.type}-tile-form`;
+        const name = `${this.tileModel.type}-tile-form`;
 
         if(! this.$options.components[name]) {
           return null;

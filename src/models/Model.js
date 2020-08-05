@@ -16,6 +16,10 @@ class Model {
 
     boot() {};
 
+    get parent() {
+        return this._parent;
+    }
+
     fill(rawObject) {
         this._original = rawObject;
         Vue.set(this, '_attributes', rawObject);

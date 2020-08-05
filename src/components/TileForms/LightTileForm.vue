@@ -5,7 +5,7 @@
         <form-section-input label="State Style" message="You can change the content and visibility for each state">
 
             <v-expansion-panels>
-                <v-expansion-panel v-for="(state, index) in form.stateStyle" :key="index">
+                <v-expansion-panel v-for="(state, index) in form.state_style" :key="index">
                     <v-expansion-panel-header>{{ state.state }}</v-expansion-panel-header>
                     <v-expansion-panel-content>
                         <v-text-field v-model="state.state" label="State" />

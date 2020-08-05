@@ -4,9 +4,7 @@ import Vue from "vue";
 
 class Page extends Model {
 
-    constructor(raw) {
-        super(raw);
-
+    boot() {
         this.loaded = false;
         this.loading = false;
         this._groups = {};
@@ -57,13 +55,17 @@ class Page extends Model {
             return Object.values(this._groups);
         }
 
+        if(this.loading) {
+            return Object.values(this._groups);
+        }
+
         this.loaded = false;
         this.loading = true;
 
         const groups = (await Page.api.groups(this)).data();
 
         for(let group of groups) {
-            this.pushPage(new Group(group, this));
+            this.pushGroup(new Group(group, this));
         }
 
         this.loaded = true;
@@ -78,6 +80,16 @@ class Page extends Model {
 
     pushGroup(group) {
         Vue.set(this._groups, group.id, group);
+    }
+
+    link() {
+        return {
+            name: 'page',
+            params: {
+                ...this.parent.link().params,
+                pageId: this.id
+            }
+        }
     }
 
 }

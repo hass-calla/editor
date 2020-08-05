@@ -27,29 +27,27 @@
             </v-toolbar>
         </div>
 
-        <div class="app-menu-body" :style="bodyStyle">
+        <v-progress-linear class="loader" :active="loadingItems" color="secondary" indeterminate />
+
+        <div class="app-menu-body" :class="{'list-is-empty': itemsLoaded && items.length <= 0 || loadingItems}" :style="bodyStyle">
             <v-list class="pl-0" v-if="! loadingItems && items.length > 0" shaped nav>
                 <app-menu-item v-for="(item, i) in items"
                                :key="item.id"
-                               :icon="item.icon"
-                               :name="item.name"
-                               :id="item.id"/>
+                               :item="item" />
             </v-list>
 
             <div class="no-items" v-if="itemsLoaded && items.length <= 0">
-                <p>Create Your First {{ this.currentListObjectType }}</p>
-                <v-icon>{{ $icons.byName('arrow-down-bold') }}</v-icon>
+                <p class="title text-h5">No {{ this.currentListObjectType }}s Found</p>
+                <p class="subtitle text-body-1">Create Your First {{ this.currentListObjectType }}</p>
+                <v-icon x-large color="black">{{ $icons.byName('arrow-down-bold') }}</v-icon>
             </div>
-
-            <div class="loader" v-if="loadingItems">
-                LOADING
-            </div>
-
         </div>
 
         <div class="app-menu-footer" ref="menuFooter">
             <v-btn color="primary"
                    @click="createObject"
+                   :loading="creating"
+                   :disabled="loadingItems"
                    large depressed
                    tile block>
                 <v-icon left>mdi-plus</v-icon>
@@ -62,6 +60,11 @@
 
 <script>
     import AppMenuItem from "./AppMenuItem";
+    import {camelCase} from 'lodash/string';
+    import Board from "../models/Board";
+    import Page from "../models/Page";
+    import Group from "../models/Group";
+    import Tile from "../models/Tile";
 
     const breadcrumbsMap = {
         'editor': 'Boards',
@@ -81,7 +84,9 @@
         data() {
             return {
                 headerHeight: 0,
-                footerHeight: 0
+                footerHeight: 0,
+                creating: false,
+                items: []
             };
         },
 
@@ -89,10 +94,44 @@
             this.$root.$on('menuGoBack', this.goBack);
         },
 
+        watch: {
+            currentObject: {
+                immediate: true,
+                async handler() {
+                    await this.$nextTick();
+                    await this.fetchItems();
+                }
+            }
+        },
+
         methods: {
 
-            createObject() {
+            async fetchItems() {
 
+                if(this.currentObject instanceof Board) {
+                    this.items = await this.currentObject.pages();
+                }
+
+                else if(this.currentObject instanceof Page) {
+                    this.items = await this.currentObject.groups();
+                }
+
+                else if(this.currentObject instanceof Group) {
+                    this.items = await this.currentObject.tiles();
+                }
+
+                else if(this.currentObject instanceof Tile) {
+                    this.items = await this.currentObject.parent.tiles();
+                }
+
+            },
+
+            async createObject() {
+                this.creating = true;
+                const object = await this.currentObject[camelCase(`new_${this.currentListObjectType}`)]();
+                this.creating = false;
+
+                this.$router.push(object.link());
             },
 
             goBack() {
@@ -165,21 +204,6 @@
             itemsLoaded() {
                 return this.currentObject && this.currentObject.loaded;
             }
-        },
-
-        asyncComputed: {
-            items: {
-                async get() {
-                    if(this.currentObject) {
-                        return await this.currentObject[this.currentListObjectType+'s']()
-                    }
-
-                    return [];
-                },
-                default () {
-                    return []
-                }
-            }
         }
 
     };
@@ -209,6 +233,28 @@
                 color: var(--v-gray-lighten5);
             }
         }
+    }
+
+    .list-is-empty {
+        display: flex;
+    }
+
+    .no-items {
+        justify-self: center;
+        align-self: center;
+        text-align: center;
+        width: 100%;
+
+        .subtitle,
+        .title {
+            text-transform: capitalize;
+            margin-bottom: 0;
+        }
+
+    }
+
+    .loader {
+        width: 100%;
     }
 
 </style>

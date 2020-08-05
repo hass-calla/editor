@@ -1,17 +1,17 @@
 <template>
 
   <builder-form class="editor-group-form">
-    <template v-slot:default="{ form, onInput }">
-      <v-text-field v-model="form.id" label="ID" readonly required />
-      <v-text-field v-model="form.name" label="Name" required>
+    <template v-if="groupModel">
+      <v-text-field v-model="groupModel.id" label="ID" readonly required />
+      <v-text-field v-model="groupModel.name" label="Name" required>
         <template v-slot:append-outer>
-          <form-icon-toggle-input v-model="form.nameVisible"
+          <form-icon-toggle-input v-model="groupModel.name_visible"
                                   on-icon="mdi-eye"
                                   off-icon="mdi-eye-off"
-                                  :tooltip="`The group name is ${(form.nameVisible ? 'visible' : 'hidden')}`" />
+                                  :tooltip="`The group name is ${(groupModel.name_visible ? 'visible' : 'hidden')}`" />
         </template>
       </v-text-field>
-      <form-icon-input v-model="form.icon"></form-icon-input>
+      <form-icon-input v-model="groupModel.icon"></form-icon-input>
     </template>
   </builder-form>
 

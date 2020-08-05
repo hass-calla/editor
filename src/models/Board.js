@@ -47,6 +47,10 @@ class Board extends Model {
             return Object.values(this._pages);
         }
 
+        if(this.loading) {
+            return Object.values(this._pages);
+        }
+
         this.loaded = false;
         this.loading = true;
 
@@ -66,6 +70,8 @@ class Board extends Model {
         this.loaded = true;
         this.loading = false;
 
+        console.log(this._pages);
+
         return Object.values(this._pages);
     }
 
@@ -82,6 +88,15 @@ class Board extends Model {
             (await Board.api.createBoard())
                 .data()
         );
+    }
+
+    link() {
+        return {
+            name: 'board',
+            params: {
+                boardId: this.id
+            }
+        }
     }
 
 }

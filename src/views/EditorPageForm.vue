@@ -1,15 +1,15 @@
 <template>
 
   <builder-form class="editor-page-form">
-    <template v-slot:default="{ form, onInput }">
-      <v-text-field v-model="form.id" label="ID" readonly required />
-      <v-text-field v-model="form.name" label="Name" required />
-      <form-icon-input v-model="form.icon"></form-icon-input>
+    <template v-if="pageModel">
+      <v-text-field v-model="pageModel.id" label="ID" readonly required />
+      <v-text-field v-model="pageModel.name" label="Name" required />
+      <form-icon-input v-model="pageModel.icon"></form-icon-input>
 
       <form-section-input label="Background"
                           message="The page background will override the device background"
-                          v-model="form.background.active" has-toggle>
-        <builder-background-control v-model="form.background" />
+                          v-model="pageModel.background.active" has-toggle>
+        <builder-background-control v-model="pageModel.background" />
       </form-section-input>
     </template>
   </builder-form>
@@ -32,6 +32,10 @@
       return {
 
       }
+    },
+
+    mounted() {
+      console.log(this.pageModel);
     },
 
     methods: {

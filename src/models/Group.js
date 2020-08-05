@@ -4,9 +4,7 @@ import Tile from "./Tile";
 
 class Group extends Model {
 
-    constructor(raw) {
-        super(raw);
-
+    boot() {
         this.loaded = false;
         this.loading = false;
         this._tiles = {};
@@ -55,7 +53,7 @@ class Group extends Model {
         return tile;
     }
 
-    async group(id) {
+    async tile(id) {
         return (await this.tiles())
             .find(g => g.id === id);
     }
@@ -65,13 +63,17 @@ class Group extends Model {
             return Object.values(this._tiles);
         }
 
+        if(this.loading) {
+            return Object.values(this._tiles);
+        }
+
         this.loaded = false;
         this.loading = true;
 
         const tiles = (await Tile.api.tiles(this)).data();
 
         for(let tile of tiles) {
-            this.pushPage(new Tile(tile, this));
+            this.pushTile(new Tile(tile, this));
         }
 
         this.loaded = true;
@@ -86,6 +88,16 @@ class Group extends Model {
 
     pushTile(tile) {
         Vue.set(this._tiles, tile.id, tile);
+    }
+
+    link() {
+        return {
+            name: 'group',
+            params: {
+                ...this.parent.link().params,
+                groupId: this.id
+            }
+        }
     }
 
 }
